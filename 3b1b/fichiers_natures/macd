@@ -1,0 +1,33 @@
+nature[1] MACD {coef}
+l = (1,4,16,32,64,128,256)
+s=[]
+for i in l:
+    for j in (1/16, 1/8, 1):
+        if 256 >= i*j >= 1:
+            s += [{
+            	'K':i,
+            	'interv':i*j
+            }]
+for i in s: print(i)
+
+tous les macd son k=1
+
+{'K': 1, 'interv': 1}
+{'K': 4, 'interv': 4}
+{'K': 16, 'interv': 1.0}
+{'K': 16, 'interv': 2.0}
+{'K': 16, 'interv': 16}
+{'K': 32, 'interv': 2.0}
+{'K': 32, 'interv': 4.0}
+{'K': 32, 'interv': 32}
+{'K': 64, 'interv': 4.0}
+{'K': 64, 'interv': 8.0}
+{'K': 64, 'interv': 64}
+{'K': 128, 'interv': 8.0}
+{'K': 128, 'interv': 16.0}
+{'K': 128, 'interv': 128}
+{'K': 256, 'interv': 16.0}
+{'K': 256, 'interv': 32.0}
+{'K': 256, 'interv': 256}
+
+len(s)*SOURCES = 18*4 = 68
