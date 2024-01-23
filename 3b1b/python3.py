@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 from math import exp, tanh
-import struct as Y
+import struct as st
 import numpy as np
 
 def lire_ligne_model(ligne):

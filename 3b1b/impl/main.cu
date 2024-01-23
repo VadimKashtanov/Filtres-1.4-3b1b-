@@ -16,7 +16,7 @@ float * pourcent_masque = de_a(0.0, 0.00, C);
 
 //	# Un jour reflechire a f(x@p0 + b0) * f(x@p1 + b1) + f(x@p2 + b2)
 
-float * alpha = de_a(1e-5, 1e-5, C);
+float * alpha = /*de_a(1e-2, 1e-2, C);//*/de_a(1e-5, 1e-5, C);
 
 //	## (x/3) * (x-2)**2                     ##
 //	## score(x) + rnd()*abs(score(x))*0.05  ##
@@ -361,24 +361,23 @@ int main(int argc, char ** argv) {
 	//
 	uint REP = 150;
 	FOR(0, rep, REP) {
-		optimisation_mini_packet(
+		perturber(mdl, 10);
+		/*optimisation_mini_packet(
 			mdl,
-			t0, t1, 16*16*5,
+			t0, t1, 16*16*20,
 			alpha, 1.0,
-			RMSPROP, 300,
-			pourcent_masque);
-		/*optimiser(
+			ADAM, 1000,
+			pourcent_masque);*/
+		optimiser(
 			mdl,
 			t0, t1,
 			alpha, 1.0,
-			RMSPROP, 2000,
+			RMSPROP, 150,
 			//pourcent_masque_nulle);
-			pourcent_masque);*/
+			pourcent_masque);
 		mdl_gpu_vers_cpu(mdl);
 		ecrire_mdl(mdl, "mdl.bin");
 		plume_pred(mdl, t0, t1);
-		//
-		perturber(mdl, 10000);
 		//
 		printf("===================================================\n");
 		printf("==================TERMINE %i/%i=======================\n", rep+1, REP);

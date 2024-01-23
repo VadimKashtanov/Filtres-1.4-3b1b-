@@ -12,8 +12,9 @@ void __interne_optimiser(
 {
 	//	Cree les listes pour les `hist` si un opti en a besoin 
 	Opti_classe_t opti_classe;
-	if      (methode == 0) opti_classe.sgd = (uint)NULL;
-	else if (methode == 1) opti_classe.rmsprop = cree_rmsprop(mdl);
+	if      (methode == SGD)     opti_classe.sgd     = (uint)NULL;
+	else if (methode == RMSPROP) opti_classe.rmsprop = cree_rmsprop(mdl);
+	else if (methode == ADAM)    opti_classe.adam    = cree_adam(mdl);
 	else ERR("Pas de methode %i d'optimisation", methode);
 	
 	//	Plumer grad pour mieux y voire
@@ -23,15 +24,16 @@ void __interne_optimiser(
 	FOR(0, i, I) {
 		mdl_aller_retour(mdl, t0, t1, 3);
 		//
-		if (methode == 0) opti_simple(mdl, alpha, div, masque);
-		if (methode == 1) opti_rmsprop(mdl, opti_classe.rmsprop, alpha, div, masque);
+		if (methode == SGD)     opti_simple (mdl, alpha, div, masque);
+		if (methode == RMSPROP) opti_rmsprop(mdl, opti_classe.rmsprop, alpha, div, masque);
+		if (methode == ADAM)    opti_adam   (mdl, opti_classe.adam,    alpha, div, masque);
 		//
 		if (NORMER_LES_FILTRES) mdl_normer_les_filtres(mdl);
 		if (BORNER_LES_FILTRES) mdl_borner_les_filtres(mdl);
 		//
-		if (i % 5 == 0) {
+		if (i % 1 == 0) {
 			float* __pred = mdl_pred(mdl, t0, t1, 3);
-			float _score = mdl_score(mdl, t0, t1, 3);
+			float  _score = mdl_score(mdl, t0, t1, 3);
 			printf("%3.i/%3.i| perf={", i, I);
 			FOR(0, p, P) printf("%+f%%, ", 100*__pred[p]);
 			free(__pred);
@@ -44,8 +46,9 @@ void __interne_optimiser(
 	}
 
 	//	Liberer
-	if (methode == 0) opti_classe.sgd = 0;
-	else if (methode == 1) liberer_rmsprop(opti_classe.rmsprop);
+	if      (methode == SGD)     opti_classe.sgd = 0;
+	else if (methode == RMSPROP) liberer_rmsprop(opti_classe.rmsprop);
+	else if (methode == ADAM)    liberer_adam   (opti_classe.adam   );
 };
 
 void optimiser(

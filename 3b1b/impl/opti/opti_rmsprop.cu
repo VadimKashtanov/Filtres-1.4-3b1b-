@@ -12,8 +12,8 @@ static __global__ void kerd_opti_rmsprop(
 
 	if (thx < POIDS) {
 		float _grad = dp[thx] / div;
-		float _g = rms_alpha*g[thx] + _grad*_grad;
-		p[thx] -= alpha * _grad / (sqrtf(_g) + 1e-5);
+		float _g = rms_alpha*g[thx] + (1-rms_alpha)*_grad*_grad;
+		p[thx] -= alpha * _grad / (sqrtf(_g) + 1e-8);
 		g[thx] = _g;
 	}
 };
@@ -27,8 +27,8 @@ static __global__ void kerd_opti_rmsprop_masque(
 	if (thx < POIDS) {
 		if (masque[thx] == NON_MASQUEE) {
 			float _grad = dp[thx] / div;
-			float _g = rms_alpha*g[thx] + _grad*_grad;
-			p[thx] -= alpha * _grad / (sqrtf(_g) + 1e-5);
+			float _g = rms_alpha*g[thx] + (1-rms_alpha)*_grad*_grad;
+			p[thx] -= alpha * _grad / (sqrtf(_g) + 1e-8);
 			g[thx] = _g;
 		}
 	}
@@ -38,8 +38,7 @@ Rmsprop_t * cree_rmsprop(
 	Mdl_t * mdl)
 {
 	Rmsprop_t * ret = alloc<Rmsprop_t>(1);
-	ret->g[0] = cudazero<float>(mdl->Y[0]*N);
-	FOR(1, c, C) ret->g[c] = cudazero<float>(mdl->inst_POIDS[c]);
+	FOR(0, c, C) ret->g[c] = cudazero<float>(mdl->inst_POIDS[c]);
 	return ret;
 };
 
@@ -53,15 +52,9 @@ void opti_rmsprop(
 	float * alpha, float div, uint ** masque)
 {
 	//	Filtres
-	uint FILTRES = mdl->Y[0];	//pas de *N, car c'est le filtre qu'on ignore, pas les points
-	if (masque == 0) {
-		kerd_opti_rmsprop<<<dim3(KERD(FILTRES, 256)), dim3(256)>>>(
-			mdl->p__d[0], mdl->dp__d[0], rmsprop->g[0], alpha[0], FILTRES, div);
-	} else {
-		kerd_opti_rmsprop_masque<<<dim3(KERD(FILTRES, 256)), dim3(256)>>>(
-			mdl->p__d[0], mdl->dp__d[0], rmsprop->g[0], alpha[0], FILTRES, div, masque[0]
-		);
-	}
+	uint FILTRES = mdl->inst_POIDS[0];	//pas de *N, car c'est le filtre qu'on ignore, pas les points
+	kerd_opti_rmsprop<<<dim3(KERD(FILTRES, 256)), dim3(256)>>>(
+		mdl->p__d[0], mdl->dp__d[0], rmsprop->g[0], alpha[0], FILTRES, div);
 	//	Poids
 	FOR(1, c, C) {
 		uint POIDS = mdl->inst_POIDS[c];

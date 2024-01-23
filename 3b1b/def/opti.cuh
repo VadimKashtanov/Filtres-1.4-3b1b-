@@ -4,6 +4,7 @@
 
 #define SGD 0
 #define RMSPROP 1
+#define ADAM 2
 
 //	======= SGD =============
 
@@ -28,6 +29,23 @@ void opti_rmsprop(
 
 void liberer_rmsprop(Rmsprop_t * rmsprop);
 
+//	======= RMSPROP ========
+
+typedef struct {
+	float * v[C];
+	float * s[C];
+} Adam_t;
+
+Adam_t * cree_adam(
+	Mdl_t * mdl);
+
+void opti_adam(
+	Mdl_t * mdl, Adam_t * adam,
+	float * alpha, float div,
+	uint ** masque);
+
+void liberer_adam(Adam_t * adam);
+
 //	======================================
 //	======= Optimisation Generale ========
 //	======================================
@@ -35,6 +53,7 @@ void liberer_rmsprop(Rmsprop_t * rmsprop);
 typedef union {
 	uint sgd;
 	Rmsprop_t * rmsprop;
+	Adam_t    *    adam;
 } Opti_classe_t;
 
 void __interne_optimiser(

@@ -25,10 +25,10 @@ nvcc -c	impl/etc/nature3__dx.cu      ${A} &
 nvcc -c	impl/etc/nature4__dxdx.cu    ${A} &
 nvcc -c	impl/etc/outils_natures.cu   ${A} &
 #	/insts
-nvcc -c impl/insts/dot1d.cu                    ${A} &
-nvcc -c impl/insts/dot1d/dot1d_naive.cu        ${A} &
-nvcc -c impl/insts/dot1d/dot1d_shared.cu       ${A} &
-nvcc -c impl/insts/dot1d/dot1d_shared_2_16.cu  ${A} &
+nvcc -c impl/insts/dot1d.cu                   ${A} &
+nvcc -c impl/insts/dot1d/dot1d_naive.cu       ${A} &
+nvcc -c impl/insts/dot1d/dot1d_shared.cu      ${A} &
+nvcc -c impl/insts/dot1d/dot1d_shared_2_16.cu ${A} &
 #
 nvcc -c impl/insts/filtres.cu                ${A} &
 nvcc -c impl/insts/filtres/filtres_naive.cu  ${A} &
@@ -54,8 +54,10 @@ nvcc -c impl/mdl/mdl_utilisation.cu ${A} &
 nvcc -c impl/mdl/mdl_calc_alpha.cu  ${A} &
 nvcc -c impl/mdl/mdl_perturber.cu   ${A} &
 #
-nvcc -c impl/opti/opti_simple.cu       ${A} &
-nvcc -c impl/opti/opti_rmsprop.cu      ${A} &
+nvcc -c impl/opti/opti_simple.cu  ${A} &
+nvcc -c impl/opti/opti_rmsprop.cu ${A} &
+nvcc -c impl/opti/opti_adam.cu    ${A} &
+#
 nvcc -c impl/opti/opti_opti.cu         ${A} &
 nvcc -c impl/opti/opti_masque.cu       ${A} &
 nvcc -c impl/opti/opti_mini_paquets.cu ${A} &

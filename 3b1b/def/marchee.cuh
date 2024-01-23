@@ -12,7 +12,7 @@
 #define N       N_FLTR
 
 #define MAX_INTERVALLE 256
-#define MAX_DECALES     32
+#define MAX_DECALES      0
 
 #define DEPART ((N_FLTR+MAX_DECALES)*MAX_INTERVALLE)
 #if (DEBBUG == false)
