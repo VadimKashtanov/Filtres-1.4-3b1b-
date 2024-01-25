@@ -31,7 +31,7 @@ void plume_filtre_prixs(Mdl_t * mdl, uint c)
 static float filtre(float * x, float * dif_x, float * f, float * locd) {
 	float s = 0, d = 0;
 	float f_nouveau = f[0];
-	s += sqrtf(1 + fabs(x[N-1] - f_nouveau));
+	s += sqrtf(1 + fabs(x[0] - f_nouveau));
 	float f_avant   = f_nouveau;
 	FOR(1, i, N) {
 		f_nouveau = f[i];

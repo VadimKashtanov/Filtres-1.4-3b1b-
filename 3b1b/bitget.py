@@ -3,29 +3,54 @@ import datetime
 
 import requests
 
+import matplotlib.pyplot as plt
+
+ARONDIRE_AU_MODULO = lambda x,mod: (x + (mod - (x%mod)) if x%mod!=0 else x)
+
+milliseconde = lambda la: int(la * 1000   )*1
+seconde      = lambda la: int(la          )*1000
+heure        = lambda la: int(la / (60*60))*1000*60*60
+
 requette_bitget = lambda de, a: eval(
 	requests.get(
-		f"https://api.bitget.com/api/mix/v1/market/history-candles?symbol=BTCUSDT_UMCBL&granularity=1H&startTime={de*1000}&endTime={a*1000}"
+		f"https://api.bitget.com/api/mix/v1/market/history-candles?symbol=BTCUSDT_UMCBL&granularity=1H&startTime={de}&endTime={a}"
 	).text
 )
 
+HEURES_PAR_REQUETTE = 100
+
+la = heure(time.time())
+heures_voulues = [
+	la - 60*60*1000*i
+	for i in range(ARONDIRE_AU_MODULO(2048+4*7*24, HEURES_PAR_REQUETTE))
+]
+
 donnees = []
-H = (8+0)*256  #200
-la = int(time.time())
-for i in range(int(1000*8/H + 1)):
-	derniere = requette_bitget(la-(i+1)*H*60*60, la-i*H*60*60)[::-1]
-	donnees += derniere
-	if i%1 == 0: print(f"%% = {i/int(1000*8/H + 1)*100},   len(derniere)={len(derniere)}")
+
+REQUETTES = int(len(heures_voulues) / HEURES_PAR_REQUETTE)
+for i in range(REQUETTES):
+	paquet_heures = requette_bitget(heures_voulues[i*HEURES_PAR_REQUETTE], heures_voulues[(i+1)*HEURES_PAR_REQUETTE-1])
+	donnees += paquet_heures
+
+	if i % 1 == 0:
+		print(f"[{round(i*HEURES_PAR_REQUETTE/len(heures_voulues)*100)}%],   len(paquet_heures)={len(paquet_heures)}")
+
 donnees = donnees[::-1]
+
+print(f"HEURES VOULUES = {len(heures_voulues)}, len(donnees)={len(donnees)}")
 
 prixs   = [float(c)                       for _,o,h,l,c,vB,vU in donnees]
 hight   = [float(h)                       for _,o,h,l,c,vB,vU in donnees]
 low     = [float(l)                       for _,o,h,l,c,vB,vU in donnees]
 volumes = [float(c)*float(vB) - float(vU) for _,o,h,l,c,vB,vU in donnees]
 
-__sources = [
+I_PRIXS = len(prixs)
+
+I__sources = [
 	prixs,
 	volumes,
 	hight,
 	low
 ]
+
+#plt.plot(prixs);plt.show()

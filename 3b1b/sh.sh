@@ -12,8 +12,8 @@ printf "[\033[93m***\033[0m] \033[103mCompilation ...\033[0m \n"
 # g c
 # G cuda
 #echo "!!! -G -g !!!";A="-Idef -diag-suppress 2464 -G -g -O0 -lm -lcublas_static -lcublasLt_static -lculibos -Xcompiler -fopenmp -Xcompiler -O3"
-#echo "!!! -g !!!";A="-Idef -diag-suppress 2464 -g -O0 -lm -lcublas_static -lcublasLt_static -lculibos -Xcompiler -fopenmp -Xcompiler -O3"
-A="-Idef -diag-suppress 2464 -O3 -lm -lcublas_static -lcublasLt_static -lculibos -Xcompiler -fopenmp -Xcompiler -O3"
+echo "!!! -g !!!";A="-Idef -diag-suppress 2464 -g -O0 -lm -lcublas_static -lcublasLt_static -lculibos -Xcompiler -fopenmp -Xcompiler -O3"
+#A="-Idef -diag-suppress 2464 -O3 -lm -lcublas_static -lcublasLt_static -lculibos -Xcompiler -fopenmp -Xcompiler -O3"
 
 #	/etc
 nvcc -c impl/etc/etc.cu     ${A} &
@@ -78,6 +78,9 @@ nvcc *.o -o prog2__resultats ${A}; rm prog2__resultats.o
 #	Compilation prog3
 nvcc -c impl/prog3__plume_filtre.cu ${A}
 nvcc *.o -o prog3__plume_filtre ${A}; rm prog3__plume_filtre.o
+#	Compilation prog4
+nvcc -c impl/prog4__simple_mdl_pour_python.cu ${A}
+nvcc *.o -o prog4__simple_mdl_pour_python ${A}; rm prog4__simple_mdl_pour_python.o
 
 #	Verification d'erreure
 if [ $? -eq 1 ]
